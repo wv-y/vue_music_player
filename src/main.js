@@ -9,14 +9,13 @@ import './assets/index.css'
 //引入阿里iconfont.css
 import './assets/iconfont/iconfont.css'
 
-//var axios = require('axios')
-//axios.defaults.baseURL = 'http://localhost:8080';
-//Vue.prototype.$axios = axios
+var axios = require('axios')
+axios.defaults.baseURL = 'https://autumnfish.cn';
+Vue.prototype.$axios = axios
 
 Vue.use(ElementUI);
 
 Vue.config.productionTip = false
-
 
 
 new Vue({

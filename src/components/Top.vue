@@ -28,7 +28,7 @@
     name: 'top',
     data() {
       return {
-        
+        data: '',
         query: ''
       }
     }

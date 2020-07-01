@@ -38,13 +38,25 @@ Vue.use(VueRouter)
   {
     path: '/songs',
     component: Songs
+  },
+  {
+    path: '/result',
+    component: Result
   }
 ]
 
+
 const router = new VueRouter({
   mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+  //base: process.env.BASE_URL,
+  routes,
+
+	scrollBehavior (to, from, savedPosition) {
+    // return 期望滚动到哪个的位置
+    console.log("sssss"+savedPosition)
+		return { x: 0, y: 0 }
+	}
 })
+
 
 export default router

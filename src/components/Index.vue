@@ -51,28 +51,28 @@
     <div class="nav" >
       <aside>
 			<el-menu background-color="#dfdfdf" default-active="/discovery" :router="true" active-text-color="#FF0000">
-				<el-menu-item index="/discovery" v-waves>
+				<el-menu-item index="/discovery" >
 					
 					<template v-slot:title>
             <span class="iconfont icon-yinle4"></span>
 						<span class="text">发现音乐</span>
 					</template>
 				</el-menu-item>
-				<el-menu-item index="/playlists" v-waves>
+				<el-menu-item index="/playlists" >
 					
 					<template v-slot:title>
             <span class="iconfont icon-gedan"></span>
 						<span class="text">推荐歌单</span>
 					</template>
 				</el-menu-item>
-				<el-menu-item index="/songs" v-waves>
+				<el-menu-item index="/songs" >
 					
 					<template v-slot:title>
             <span class="iconfont icon-yinle"></span>
 						<span class="text">最新音乐</span>
 					</template>
 				</el-menu-item>
-				<el-menu-item index="/mvs" v-waves>
+				<el-menu-item index="/mvs" >
 					
 					<template v-slot:title>
             <span class="iconfont icon-chakanMV"></span>
@@ -86,7 +86,7 @@
       <router-view></router-view>
     </div>
     <div class="player">
-      <audio :src='musicUrl' controls></audio>
+      <audio :src='musicUrl' controls autoplay></audio>
     </div>
   </div>
 </template> 
@@ -96,8 +96,7 @@ export default {
   name: "index",
   data() {
     return {
-      musicUrl:
-        "http://m7.music.126.net/20200303182550/8aa5971b1630d1527a922ccd2b97f392/ymusic/035d/0109/520e/478f86cc9f6c6539f7c8ed3e06c1bf8e.mp3",
+      musicUrl: "",
     };
   },
 };
