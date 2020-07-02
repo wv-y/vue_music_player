@@ -2,7 +2,7 @@
   <div class="discovery-container">
     <!-- 轮播图 -->
     <el-carousel class="" :interval="4000" type="card">
-      <el-carousel-item v-for="(item,index) in banners" :key="index">
+      <el-carousel-item v-for="(item, index) in banners" :key="index">
         <img :src="item.imageUrl" alt="" />
       </el-carousel-item>
     </el-carousel>
@@ -12,17 +12,16 @@
         推荐歌单
       </h3>
       <div class="items">
-        <div class="item" v-for="(item,index) in gedan" :key="index">
+        <div class="item" v-for="(item, index) in gedan" :key="index">
           <div class="img-wrap">
             <div class="desc-wrap">
-              <span class="desc">{{item.copywriter}}</span>
+              <span class="desc">{{ item.copywriter }}</span>
             </div>
             <img :src="item.picUrl" alt="" />
             <span class="iconfont icon-play"></span>
           </div>
-          <p class="name"> {{item.name}} </p>
+          <p class="name">{{ item.name }}</p>
         </div>
-        
       </div>
     </div>
     <!-- 最新音乐 -->
@@ -31,14 +30,20 @@
         推荐最新音乐
       </h3>
       <div class="items">
-        <div class="item" v-for="(item,index) in newSongList" :key="index">
+        <div class="item" v-for="(item, index) in newSongList" :key="index">
           <div class="img-wrap">
             <img :src="item.picUrl" alt="" />
-            <span class="iconfont icon-play" @click="playMusic(item.id)"></span>
+            <span class="iconfont icon-play" @click="playMusic(index)"></span>
           </div>
           <div class="song-wrap">
-            <div class="song-name"> {{item.name}} </div>
-            <div class="singer" v-for="(it,index) in item.song.artists" :key="index"> {{it.name}} </div>
+            <div class="song-name">{{ item.name }}</div>
+            <div
+              class="singer"
+              v-for="(it, index) in item.song.artists"
+              :key="index"
+            >
+              {{ it.name }}
+            </div>
           </div>
         </div>
       </div>
@@ -47,81 +52,121 @@
     <div class="mvs">
       <h3 class="title">推荐MV</h3>
       <div class="items">
-        <div class="item" v-for="(item,index) in newMvList" :key="index">
+        <div class="item" v-for="(item, index) in newMvList" :key="index">
           <div class="img-wrap" @click="toMv(item.id)">
             <img :src="item.picUrl" alt="" />
             <span class="iconfont icon-play"></span>
             <div class="num-wrap">
               <div class="iconfont icon-play"></div>
-              <div class="num"> {{item.playCount}} </div>
+              <div class="num">{{ item.playCount }}</div>
             </div>
           </div>
           <div class="info-wrap">
-            <div class="name"> {{item.name}} </div>
-            <div class="singer"> {{item.artistName}} </div>
+            <div class="name">{{ item.name }}</div>
+            <div class="singer">{{ item.artistName }}</div>
           </div>
         </div>
-
       </div>
-
     </div>
   </div>
 </template>
 
 <script>
+//import { mapActions, mapState } from 'vuex'
 export default {
-  name: 'discovery',
+  name: "discovery",
   data() {
     return {
       //轮播图
-     banners:[],
-     //推荐歌单
-     gedan: [],
-     //推荐音乐
-     newSongList:[],
-     //推荐mv
-     newMvList: []
+      banners: [],
+      //推荐歌单
+      gedan: [],
+      //推荐音乐
+      newSongList: [],
+      //推荐mv
+      newMvList: [],
     };
   },
 
-  created(){
+  created() {
     //轮播图
-    this.$axios.get("/banner").then(res =>{
+    this.$axios.get("/banner").then((res) => {
       //console.log(res);
       this.banners = res.data.banners;
-    })
+    });
     //推荐歌单
-    this.$axios.get("/personalized?limit=12").then(res =>{
+    this.$axios.get("/personalized?limit=12").then((res) => {
       //console.log(res)
       this.gedan = res.data.result;
-    })
+    });
     //最新音乐
-    this.$axios.get("/personalized/newsong").then(res => {
+    this.$axios.get("/personalized/newsong").then((res) => {
       //console.log(res)
       this.newSongList = res.data.result;
-    })
+    });
     //推荐mv
-    this.$axios.get("/personalized/mv?limit=8").then(res=>{
+    this.$axios.get("/personalized/mv?limit=8").then((res) => {
       //console.log(res)
       this.newMvList = res.data.result;
-    })
+    });
   },
-  methods:{
-    playMusic(id){
-      this.$axios.get("/song/url?id="+id).then(res=>{
-        let url = res.data.data[0].url;
-        //设置给父组件 Index 播放地址
-        this.$parent.musicUrl = url;
-      })
+  methods: {
+    /* ...mapActions(['playGetMusic']),
+    ...mapMutations(['saveMusicList','saveMusicIndex']),
+    playMusic (index) {
+			const params = {
+				V: this,
+       
+      }
+      this.saveMusicList(this.newSongList);
+      this.saveMusicIndex(index);
+			// 播放音乐
+			this.playGetMusic(params)
+		},
+*/
+    playMusic(index) {
+      this.$axios
+        .get("/song/url?id=" + this.newSongList[index].id)
+        .then((res) => {
+          console.log(res);
+          let url = res.data.data[0].url;
+          //设置给父组件 Index 播放地址
+          console.log(this.newSongList);
+          for (let i = 0; i < this.newSongList.length; i++) {
+            this.$parent.musicList[i] = this.newSongList[i];
+          }
+          //this.$parent.musicList = this.newSongList;
+          this.$parent.musicUrl = url;
+          this.$parent.index = index;
+          //element-ui Notification 通知
+          this.$notify.closeAll();
+          this.$notify({
+            title: "正在播放",
+            duration: 0, //不自动关闭
+            dangerouslyUseHTMLString: true, //识别HTML片段
+            position: "bottom-right", //弹出位置
+            offset: 100, //偏移量
+            message: `
+        <div>
+        <div class = "current-music-card">
+					<img class = "cover" src="${this.newSongList[index].picUrl}"></img>
+          <h3 class = "music-name" >${this.newSongList[index].name}--${this.newSongList[index].song.artists[0].name}</h3>
+        </div>
+         <div class = "musicCradButton">
+              <span class="iconfont icon-shangyishou"></span>
+              <span class="iconfont icon-xiayishou"></span>
+          </div>
+        </div>
+				`,
+          });
+        });
     },
     //跳转到mv详情页
-    toMv(id){
-      this.$router.push(`/mv?id=${id}`)
-    }
-  }
+    toMv(id) {
+      this.$router.push(`/mv?id=${id}`);
+    },
+  },
 };
 </script>
 
-<style >
-
-</style>
+<style></style>

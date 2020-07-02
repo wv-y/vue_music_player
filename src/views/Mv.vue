@@ -6,7 +6,7 @@
       <div class="video-wrap">
         <video
           controls
-          autoplay
+          
           :src="data.url"
         ></video>
       </div>
@@ -142,6 +142,7 @@
 
 <script>
 export default {
+ 
   name: 'mv',
   data() {
     return {
@@ -162,10 +163,6 @@ export default {
      // console.log(`当前页: ${val}`);
     }
   },
-  mounted() {
- // 切换页面时滚动条自动滚动到顶部
-    window.scrollTo(0,0);
-},
   created(){
     //获取mv url
     this.$axios.get("/mv/url?id="+this.$route.query.id).then(res=>{
@@ -174,16 +171,21 @@ export default {
     })
     //获取相关mv推荐
     this.$axios.get("/simi/mv?mvid="+this.$route.query.id).then(res => {
-     // console.log(res)
+      console.log(res)
       this.mvList = res.data.mvs;
       for(let i = 0; i < this.mvList.length;i++){
         let min = parseInt(this.mvList[i].duration/60000);
-        let sec = this.mvList[i].duration/1000%60;
+        let sec = parseInt(this.mvList[i].duration/1000%60);
+        let count = parseInt(this.mvList[i].playCount/10000);
         if(min < 10){
           min = '0'+min;
         }
         if(sec < 10){
           sec = '0'+sec;
+        }
+        if(count > 1 ){
+          count = count +'万';
+          this.mvList[i].playCount = count;
         }
         this.mvList[i].duration = min + ':' + sec;
       }
@@ -192,6 +194,7 @@ export default {
     this.$axios.get("/mv/detail?mvid="+this.$route.query.id).then(res => {
      // console.log(res)
       this.mvDetail = res.data.data;
+      
       if(this.mvDetail.playCount > 9999){
         let count = parseInt(this.mvDetail.playCount/10000);
         this.mvDetail.playCount = count + '万'

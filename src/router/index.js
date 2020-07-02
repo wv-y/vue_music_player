@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import Index from '../components/Index.vue'
 import Discovery from '../views/Discovery.vue'
 import Playlist from '../views/Playlist.vue'
 import Playlists from '../views/Playlists.vue'
@@ -9,7 +10,7 @@ import Songs from '../views/Songs.vue'
 import Result from '../views/Result.vue'
 
 Vue.use(VueRouter)
-
+/*
   const routes = [
   {
     path: '/',
@@ -44,18 +45,67 @@ Vue.use(VueRouter)
     component: Result
   }
 ]
+*/
 
+
+const routes = [
+	{
+		path: '/',
+		redirect: '/discovery', 
+		component: Index,
+		children: [
+			{
+				path: '/discovery',
+				component: Discovery
+			},
+			{
+				path: '/playlists',
+				component: Playlists
+			},
+			{
+				path: '/songs',
+				component: Songs
+			},
+			{
+				path: '/mvs',
+				component: Mvs
+			},
+			{
+				path: '/result/:search',
+				component: Result,
+				name: 'searchResult',
+				
+			},
+			{
+				path: '/playlist',
+				component: Playlist,
+				name: 'playlistDetail',
+			
+			},
+			{
+				path: '/mv',
+				component: Mv,
+				name: 'MvDetail',
+				
+			}
+		]
+	}
+]
 
 const router = new VueRouter({
   mode: 'history',
   //base: process.env.BASE_URL,
   routes,
 
-	scrollBehavior (to, from, savedPosition) {
-    // return 期望滚动到哪个的位置
-    console.log("sssss"+savedPosition)
-		return { x: 0, y: 0 }
-	}
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+        return savedPosition
+    }
+    return {
+        x: 0,
+        y: 0
+    }
+  }
 })
 
 

@@ -1230,8 +1230,10 @@ ol {
 }
 
 .index-container .nav {
-  background-color: #ededed;
-  width: 200px;
+  flex: 0.15;
+  position: fixed;
+  background-color: #dfdfdf;
+  width: 180px;
   height: 100%;
 }
 
@@ -1269,9 +1271,14 @@ ol {
 }
 
 .index-container .main {
-  flex: 1;
+  
+  flex: 0.85;
+  position:relative;
+  left:180px;
+  
   overflow-y: scroll;
-  padding: 10px 20px;
+  padding: 10px 10px;
+  
 }
 
 .index-container .main > div {
@@ -1295,6 +1302,7 @@ ol {
 }
 
 .top-container {
+  z-index: 99;
   display: flex;
   justify-content: space-between;
   padding: 0 20px;
@@ -1357,3 +1365,43 @@ ol {
   padding-top: 60px;
   padding-bottom: 60px;
 }
+
+
+/*正在播放歌曲*/
+.current-music-card{
+  display: flex;
+ 
+	width: 100%;
+	align-items: center;
+	justify-content: space-between;
+}
+.current-music-card	.music-name{
+		margin-left: 20px;
+}
+.current-music-card	.cover{
+		width: 80px;
+		max-height: 80px;
+		object-fit: cover;
+    border-radius: 50%;
+  }
+   .musicCradButton{
+    display: flex;
+  
+    align-items: center;
+    width: 30%;
+    justify-content: space-between;
+    margin-top: 10px;
+    margin-left: 5px;
+  }
+
+  .musicCradButton .buttonLeft{
+    
+    width: 60px;
+    height: 60px;
+  }
+
+  .musicCradButton .buttonRight{
+    margin-left: 20px;
+    width: 60px;
+    height: 60px;
+  }

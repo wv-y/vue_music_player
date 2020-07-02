@@ -45,12 +45,12 @@
     </div>
   </el-container>
 </template>-->
-<!--
+
 <template>
   <div class="index-container">
     <div class="nav" >
-      <aside>
-			<el-menu background-color="#dfdfdf" default-active="/discovery" :router="true" active-text-color="#FF0000">
+      <!--<aside>
+			<el-menu  default-active="/discovery" :router="true" active-text-color="#FF0000">
 				<el-menu-item index="/discovery" >
 					
 					<template v-slot:title>
@@ -80,26 +80,100 @@
 					</template>
 				</el-menu-item>
 			</el-menu>
-		</aside>
+		</aside>-->
+    <ul>
+        <li>
+          <router-link to="/discovery">
+            <span class="iconfont icon-find-music"></span>
+            发现音乐
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/playlists">
+            <span class="iconfont icon-music-list"></span>
+            推荐歌单
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/songs">
+            <span class="iconfont icon-music"></span>
+            最新音乐
+          </router-link>
+        </li>
+        <li>
+          <router-link to="/mvs">
+            <span class="iconfont icon-mv"></span>
+            最新MV
+          </router-link>
+        </li>
+      </ul>
     </div>
-    <div class="main">
+    <div class="main" >
+        <transition name="el-fade-in-linear">
       <router-view></router-view>
+        </transition>
     </div>
     <div class="player">
-      <audio :src='musicUrl' controls autoplay></audio>
+      <audio :src='musicUrl' controls autoplay ref="audioRef" @ended="nextMusic"></audio>
     </div>
   </div>
 </template> 
 
-
 <script>
+//import { mapState, mapMutations } from 'vuex'
 export default {
   name: "index",
   data() {
     return {
       musicUrl: "",
+      musicList: [],
+      index: 0,
     };
   },
+  /*methods: {
+		...mapMutations(['saveAudioRef'])
+	},
+  mounted(){
+    //存储音频播放器的引用
+    this.saveAudioRef(this.$refs.audioRef)
+  }*/
+  methods:{
+    playMusic(index){
+      console.log(this.musicList[index])
+      this.$axios.get("/song/url?id="+this.musicList[index].id).then(res=>{
+        this.musicUrl = res.data.data[0].url;
+      })
+      this.$notify.closeAll();
+      this.$notify({
+          title: '正在播放',
+          duration: 0, //不自动关闭
+          dangerouslyUseHTMLString: true, //识别HTML片段
+          position: 'bottom-right', //弹出位置
+          offset: 100,   //偏移量
+          message: `
+				<div>
+        <div class = "current-music-card">
+					<img class = "cover" src="${this.musicList[index].picUrl}"></img>
+          <h3 class = "music-name" >${this.musicList[index].name}--${this.musicList[index].song.artists[0].name}</h3>
+        </div>
+         <div class = "musicCradButton">
+              <span class="iconfont icon-shangyishou"></span>
+              <span class="iconfont icon-xiayishou"></span>
+          </div>
+        </div>
+				`
+        });
+    },
+   nextMusic(){
+    // console.log("调用"+this.index+this.musicList);
+     if(this.index == this.musicList.length-1){
+       this.index = 0;
+     }else{
+       this.index++;
+     }
+     this.playMusic(this.index);
+   } 
+  }
 };
 </script>
 
@@ -109,30 +183,10 @@ export default {
   font-size: 18px;
  
 }
-</style>
--->
 
 
-<template>
-  <div >
-    <top/>
-    <index />
-  </div>
-</template>
-
-<script>
-import top from './Top.vue'
-import index from './Main.vue';
-export default {
- 
-  components: {
-    index,
-    top
-  },
-
-};
-</script>
-
-<style >
 
 </style>
+
+
+
