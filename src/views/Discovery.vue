@@ -85,6 +85,7 @@ export default {
       newSongList: [],
       //推荐mv
       newMvList: [],
+      musicList: []
     };
   },
 
@@ -101,8 +102,23 @@ export default {
     });
     //最新音乐
     this.$axios.get("/personalized/newsong").then((res) => {
-      //console.log(res)
+      
       this.newSongList = res.data.result;
+      for(let i = 0; i<this.newSongList.length; i++){
+        let newSong = [
+            {
+              name: "",
+              id: "",
+              picUrl: "",
+              artist:""
+            },
+          ];
+          newSong[0].name = this.newSongList[i].name;
+          newSong[0].id = this.newSongList[i].id;
+          newSong[0].picUrl = this.newSongList[i].picUrl;
+          newSong[0].artist = this.newSongList[i].song.artists[0].name;
+          this.musicList.push(newSong[0]);
+      }
     });
     //推荐mv
     this.$axios.get("/personalized/mv?limit=8").then((res) => {
@@ -111,29 +127,16 @@ export default {
     });
   },
   methods: {
-    /* ...mapActions(['playGetMusic']),
-    ...mapMutations(['saveMusicList','saveMusicIndex']),
-    playMusic (index) {
-			const params = {
-				V: this,
-       
-      }
-      this.saveMusicList(this.newSongList);
-      this.saveMusicIndex(index);
-			// 播放音乐
-			this.playGetMusic(params)
-		},
-*/
     playMusic(index) {
       this.$axios
-        .get("/song/url?id=" + this.newSongList[index].id)
+        .get("/song/url?id=" + this.musicList[index].id)
         .then((res) => {
           console.log(res);
           let url = res.data.data[0].url;
           //设置给父组件 Index 播放地址
-          console.log(this.newSongList);
-          for (let i = 0; i < this.newSongList.length; i++) {
-            this.$parent.musicList[i] = this.newSongList[i];
+          console.log(this.musicList);
+          for (let i = 0; i < this.musicList.length; i++) {
+            this.$parent.musicList[i] = this.musicList[i];
           }
           //this.$parent.musicList = this.newSongList;
           this.$parent.musicUrl = url;
@@ -149,11 +152,12 @@ export default {
             message: `
         <div>
         <div class = "current-music-card">
-					<img class = "cover" src="${this.newSongList[index].picUrl}"></img>
-          <h3 class = "music-name" >${this.newSongList[index].name}--${this.newSongList[index].song.artists[0].name}</h3>
+					<img class = "cover" src="${this.musicList[index].picUrl}"></img>
+          <h3 class = "music-name" >${this.musicList[index].name}--${this.musicList[index].artist}</h3>
         </div>
          <div class = "musicCradButton">
-              <span class="iconfont icon-shangyishou"></span>
+              <span class="iconfont icon-shangyishou" @click="lastMusic"></span>
+              <span class="iconfont icon-bofang"></span>
               <span class="iconfont icon-xiayishou"></span>
           </div>
         </div>
@@ -161,6 +165,11 @@ export default {
           });
         });
     },
+
+    lastMusic(){
+      console.log("shihi")
+    },
+
     //跳转到mv详情页
     toMv(id) {
       this.$router.push(`/mv?id=${id}`);

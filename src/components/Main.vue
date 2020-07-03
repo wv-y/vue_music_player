@@ -84,7 +84,7 @@
     <ul>
         <li>
           <router-link to="/discovery">
-            <span class="iconfont icon-find-music"></span>
+            <span class="iconfont icon-yinle4"></span>
             发现音乐
           </router-link>
         </li>
@@ -96,13 +96,13 @@
         </li>
         <li>
           <router-link to="/songs">
-            <span class="iconfont icon-music"></span>
+            <span class="iconfont icon-yinle"></span>
             最新音乐
           </router-link>
         </li>
         <li>
           <router-link to="/mvs">
-            <span class="iconfont icon-mv"></span>
+            <span class="iconfont icon-chakanMV"></span>
             最新MV
           </router-link>
         </li>
@@ -130,16 +130,9 @@ export default {
       index: 0,
     };
   },
-  /*methods: {
-		...mapMutations(['saveAudioRef'])
-	},
-  mounted(){
-    //存储音频播放器的引用
-    this.saveAudioRef(this.$refs.audioRef)
-  }*/
   methods:{
     playMusic(index){
-      console.log(this.musicList[index])
+     // console.log(this.musicList[index])
       this.$axios.get("/song/url?id="+this.musicList[index].id).then(res=>{
         this.musicUrl = res.data.data[0].url;
       })
@@ -154,7 +147,7 @@ export default {
 				<div>
         <div class = "current-music-card">
 					<img class = "cover" src="${this.musicList[index].picUrl}"></img>
-          <h3 class = "music-name" >${this.musicList[index].name}--${this.musicList[index].song.artists[0].name}</h3>
+          <h3 class = "music-name" >${this.musicList[index].name}--${this.musicList[index].artist}</h3>
         </div>
          <div class = "musicCradButton">
               <span class="iconfont icon-shangyishou"></span>
