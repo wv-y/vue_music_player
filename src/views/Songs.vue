@@ -34,7 +34,7 @@
             <div class="song-wrap">
               <div class="name-wrap">
                 <span> {{ item.name }} </span>
-                <span class="iconfont icon-mv"></span>
+                <span v-if="item.mvid !== 0" class="iconfont icon-mv" @click="toMv(item.mvid)"></span>
               </div>
             </div>
           </td>
@@ -57,7 +57,6 @@ export default {
   data() {
     return {
       type: 0,
-      songsList: [],
       musicList: [],
     };
   },
@@ -67,27 +66,32 @@ export default {
   methods: {
     getSongs() {
       this.$axios.get("/top/song?type="+this.type).then((res) => {
-        //console.log(res);
-        this.songsList = res.data.data;
-        for (let i = 0; i < this.songsList.length; i++) {
-          let newSong = [
+        this.musicList = [];
+        var songsList = [];
+        songsList = res.data.data;
+        console.log(this.songsList)
+       var that = this;
+        for (let i = 0; i < songsList.length; i++) {
+          var newSong = [
             {
               name: "",
               id: "",
               picUrl: "",
               duration: "",
+              mvid: "",
               album: [],
               artist: ""
             },
           ];
-          newSong[0].name = this.songsList[i].name;
-          newSong[0].id = this.songsList[i].id;
-          newSong[0].picUrl = this.songsList[i].album.picUrl;
-          newSong[0].album = this.songsList[i].album;
-          newSong[0].artist = this.songsList[i].album.artists[0].name;
+          newSong[0].name = songsList[i].name;
+          newSong[0].id = songsList[i].id;
+          newSong[0].mvid = songsList[i].mvid;
+          newSong[0].picUrl = songsList[i].album.picUrl;
+          newSong[0].album = songsList[i].album;
+          newSong[0].artist = songsList[i].album.artists[0].name;
           //转换时间格式
-          let min = parseInt(this.songsList[i].duration / 60000);
-          let sec = parseInt((this.songsList[i].duration / 1000) % 60);
+          let min = parseInt(songsList[i].duration / 60000);
+          let sec = parseInt((songsList[i].duration / 1000) % 60);
           if (min < 10) {
             min = "0" + min;
           }
@@ -99,16 +103,21 @@ export default {
         }
       });
     },
+    
+    //跳转到mv详情页
+    toMv(id) {
+      this.$router.push(`/mv?id=${id}`);
+    },
 
     //播放歌曲
      playMusic(index) {
       this.$axios
         .get("/song/url?id=" + this.musicList[index].id)
         .then((res) => {
-          console.log(res);
+        //  console.log(res);
           let url = res.data.data[0].url;
           //设置给父组件 Index 播放地址
-          console.log(this.musicList);
+         // console.log(this.musicList);
           for (let i = 0; i < this.musicList.length; i++) {
             this.$parent.musicList[i] = this.musicList[i];
           }

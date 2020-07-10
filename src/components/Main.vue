@@ -132,7 +132,7 @@ export default {
   },
   methods:{
     playMusic(index){
-     // console.log(this.musicList[index])
+     //console.log(this.musicList[index])
       this.$axios.get("/song/url?id="+this.musicList[index].id).then(res=>{
         this.musicUrl = res.data.data[0].url;
       })
@@ -149,10 +149,7 @@ export default {
 					<img class = "cover" src="${this.musicList[index].picUrl}"></img>
           <h3 class = "music-name" >${this.musicList[index].name}--${this.musicList[index].artist}</h3>
         </div>
-         <div class = "musicCradButton">
-              <span class="iconfont icon-shangyishou"></span>
-              <span class="iconfont icon-xiayishou"></span>
-          </div>
+         
         </div>
 				`
         });

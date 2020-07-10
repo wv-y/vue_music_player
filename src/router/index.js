@@ -71,10 +71,8 @@ const routes = [
 				component: Mvs
 			},
 			{
-				path: '/result/:search',
+				path: '/result',
 				component: Result,
-				name: 'searchResult',
-				
 			},
 			{
 				path: '/playlist',

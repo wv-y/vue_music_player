@@ -13,7 +13,8 @@
     </div>
     <div class="right-box">
      <el-input
-          v-model="data"
+          @keyup.enter.native="toResult"
+          v-model="inputData"
           placeholder="请输入内容"
           clearable
           prefix-icon="el-icon-search"
@@ -28,8 +29,17 @@
     name: 'top',
     data() {
       return {
-        data: '',
+        inputData: '',
         query: ''
+      }
+    },
+    methods:{
+      toResult(){
+        if(this.inputData === ''){
+          this.$message.error('内容不能为空');
+        }else{
+          this.$router.push("/result?inputData="+this.inputData)
+        }
       }
     }
   }

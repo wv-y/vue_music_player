@@ -38,11 +38,11 @@
       <!-- tab的内容区域 -->
       <div class="tab-content">
         <div class="items">
-          <div class="item" v-for="(item,index) in playListAll" :key="index">
+          <div class="item" @click="toSongsList(item.id)" v-for="(item,index) in playListAll" :key="index">
             <div class="img-wrap">
               <div class="num-wrap">
                 播放量:
-                <span class="num"> {{item.playCount}}</span>
+                <span class="num"> {{item.playCount | playNumFormat }}</span>
               </div>
               <img :src="item.coverImgUrl" alt="" />
               <span class="iconfont icon-play"></span>
@@ -88,12 +88,7 @@ export default {
       this.total = res.data.total; //总条数
 
       this.playListAll = res.data.playlists;
-      for(let i =0;i<this.playListAll.length;i++){
-        if (this.playListAll[i].playCount > 9999){
-          let count = parseInt( this.playListAll[i].playCount/10000 )
-          this.playListAll[i].playCount = count + '万'
-        }
-      }
+     
     }); 
     },
     //分页变化时更新数据
@@ -101,6 +96,10 @@ export default {
       //console.log(`当前页: ${val}`);
       this.page = val;
       this.getMusicList();
+    },
+    //跳转到歌单详情页
+    toSongsList(id){
+       this.$router.push(`/playlist?id=${id}`);
     }
   },
   created(){

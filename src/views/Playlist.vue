@@ -2,35 +2,28 @@
   <div class="playlist-container">
     <div class="top-wrap">
       <div class="img-wrap">
-        <img src="../assets/playListCover.jpg" alt="" />
+        <img :src="resultMes.coverImgUrl" alt="" />
       </div>
       <div class="info-wrap">
-        <p class="title">俗世里的烟火气|总有些瞬间 让你热泪盈眶</p>
+        <p class="title"> {{resultMes.name}} </p>
         <div class="author-wrap">
-          <img class="avatar" src="../assets/avatar.jpg" alt="" />
-          <span class="name">原创君</span>
-          <span class="time">2020-2-26 创建</span>
+          <img class="avatar" :src="resultMes.creator.avatarUrl" alt="" v-if="resultMes.creator !== undefined"/>
+          <span class="name"  v-if="resultMes.creator !== undefined"> {{resultMes.creator.nickname}} </span>
+          <span class="time"> {{resultMes.createTime | dateFormat}} 创建</span>
         </div>
-        <div class="play-wrap">
+        <div class="play-wrap"  @click="playMusic(0)">
           <span class="iconfont icon-circle-play"></span>
-          <span class="text">播放全部</span>
+          <span class="text" >播放全部</span>
         </div>
         <div class="tag-wrap">
           <span class="title">标签:</span>
           <ul>
-            <li>华语</li>
-            <li>怀旧</li>
-            <li>感动</li>
+            <li v-for="(item,index) in resultMes.tags" :key="index"> {{item}} </li>
           </ul>
         </div>
         <div class="desc-wrap">
           <span class="title">简介:</span>
-          <span class="desc"
-            >你是否曾在某个瞬间 被一次日落击中心中最柔软的部分 曾在回家途中
-            被袅袅升起的饭菜香味感动得热泪盈眶？ 生活或许有时不尽如人意
-            却总有一些叫“烟火气”的东西 使得我们在这个俗世中 依然保持希望
-            封面来自网络</span
-          >
+          <span class="desc"> {{resultMes.description}} </span>
         </div>
       </div>
     </div>
@@ -46,126 +39,76 @@
             <th>时长</th>
           </thead>
           <tbody>
-            <tr class="el-table__row">
-              <td>1</td>
+            <tr class="el-table__row" v-for="(item,index) in musicList" :key="index" @click="playMusic(index)">
+              <td> {{index+1}} </td>
               <td>
                 <div class="img-wrap">
-                  <img src="../assets/songCover.jpg" alt="" />
+                  <img :src="item.picUrl" alt="" />
                   <span class="iconfont icon-play"></span>
                 </div>
               </td>
               <td>
                 <div class="song-wrap">
                   <div class="name-wrap">
-                    <span>你要相信这不是最后一天</span>
-                    <span class="iconfont icon-mv"></span>
-                  </div>
-                  <span>电视剧加油练习生插曲</span>
-                </div>
-              </td>
-              <td>华晨宇</td>
-              <td>你要相信这不是最后一天</td>
-              <td>06:03</td>
-            </tr>
-            <tr class="el-table__row">
-              <td>2</td>
-               <td>
-                <div class="img-wrap">
-                  <img src="../assets/songCover.jpg" alt="" />
-                  <span class="iconfont icon-play"></span>
-                </div>
-              </td>
-              <td>
-                <div class="song-wrap">
-                  <div class="name-wrap">
-                    <span>你要相信这不是最后一天</span>
-                    <span class="iconfont icon-mv"></span>
+                    <span> {{item.name}} </span>
+                    <span class="iconfont icon-mv" v-if="item.mvid !== 0" @click="toMv(item.mvid)"></span>
                   </div>
                 </div>
               </td>
-              <td>华晨宇</td>
-              <td>你要相信这不是最后一天</td>
-              <td>06:03</td>
+              <td> {{item.artist}} </td>
+              <td> {{item.albumName}} </td>
+              <td> {{item.duration | playTimeFormat}}</td>
             </tr>
           </tbody>
         </table>
       </el-tab-pane>
-      <el-tab-pane label="评论(66)" name="2">
+      <el-tab-pane :label="`评论(${total})`" name="2">
         <!-- 精彩评论 -->
-        <div class="comment-wrap">
-          <p class="title">精彩评论<span class="number">(666)</span></p>
+        <div class="comment-wrap" v-if="hotComment !== undefined && hotComment.length !== 0">
+          <p class="title">精彩评论<span class="number">({{hotComment.length}})</span></p>
           <div class="comments-wrap">
-            <div class="item">
+            <div class="item" v-for="(item,index) in hotComment" :key="index">
+              <!--头像-->
               <div class="icon-wrap">
-                <img src="../assets/avatar.jpg" alt="" />
+                <img :src="item.user.avatarUrl" alt="" />
               </div>
+              <!--评论-->
               <div class="content-wrap">
                 <div class="content">
-                  <span class="name">爱斯基摩：</span>
-                  <span class="comment">谁说的，长大了依旧可爱哈</span>
+                  <span class="name"> {{item.user.nickname}}：</span>
+                  <span class="comment"> {{item.content}} </span>
                 </div>
-                <div class="re-content">
-                  <span class="name">小苹果：</span>
-                  <span class="comment">还是小时候比较可爱</span>
+                <!--回复-->
+                <div class="re-content" v-if="item.beReplied.length !=0">
+                  <span class="name">{{item.beReplied[0].user.nickname}}：</span>
+                  <span class="comment"> {{item.beReplied[0].content}} </span>
                 </div>
-                <div class="date">2020-02-12 17:26:11</div>
+                <div class="date"> {{item.time | dateFormat}} </div>
               </div>
             </div>
           </div>
         </div>
         <!-- 最新评论 -->
-        <div class="comment-wrap">
-          <p class="title">最新评论<span class="number">(666)</span></p>
+        <div class="comment-wrap" v-if="newComment !== undefined && newComment.length !== 0">
+          <p class="title">最新评论<span class="number">({{total}})</span></p>
           <div class="comments-wrap">
-            <div class="item">
+            <div class="item" v-for="(item,index) in newComment" :key="index">
               <div class="icon-wrap">
-                <img src="../assets/avatar.jpg" alt="" />
+                <img :src="item.user.avatarUrl" alt="" />
               </div>
               <div class="content-wrap">
                 <div class="content">
-                  <span class="name">爱斯基摩：</span>
-                  <span class="comment">谁说的，长大了依旧可爱哈</span>
+                  <span class="name"> {{item.user.nickname}}： </span>
+                  <span class="comment"> {{item.content}} </span>
                 </div>
-                <div class="re-content">
-                  <span class="name">小苹果：</span>
-                  <span class="comment">还是小时候比较可爱</span>
+                <div class="re-content" v-if="item.beReplied.length != 0">
+                  <span class="name">{{item.beReplied[0].user.nickname}}：</span>
+                  <span class="comment">{{item.beReplied[0].content}}</span>
                 </div>
-                <div class="date">2020-02-12 17:26:11</div>
+                <div class="date"> {{item.time | dateFormat}} </div>
               </div>
-            </div>
-            <div class="item">
-              <div class="icon-wrap">
-                <img src="../assets/avatar.jpg" alt="" />
-              </div>
-              <div class="content-wrap">
-                <div class="content">
-                  <span class="name">爱斯基摩：</span>
-                  <span class="comment">谁说的，长大了依旧可爱哈</span>
-                </div>
-                <div class="re-content">
-                  <span class="name">小苹果：</span>
-                  <span class="comment">还是小时候比较可爱</span>
-                </div>
-                <div class="date">2020-02-12 17:26:11</div>
-              </div>
-            </div>
-            <div class="item">
-              <div class="icon-wrap">
-                <img src="../assets/avatar.jpg" alt="" />
-              </div>
-              <div class="content-wrap">
-                <div class="content">
-                  <span class="name">爱斯基摩：</span>
-                  <span class="comment">谁说的，长大了依旧可爱哈</span>
-                </div>
-                <div class="re-content">
-                  <span class="name">小苹果：</span>
-                  <span class="comment">还是小时候比较可爱</span>
-                </div>
-                <div class="date">2020-02-12 17:26:11</div>
-              </div>
-            </div>
-          </div>
+            </div> 
+        </div>
         </div>
         <!-- 分页器 -->
         <el-pagination
@@ -191,13 +134,114 @@ export default {
       // 总条数
       total: 0,
       // 页码
-      page: 1
+      page: 1,
+      resultMes: [],
+      musicList: [],
+      id: "",
+      hotComment: [],
+      newComment: [],
+      hotCount: 0,
+      CommentCount: 0
     };
   },
   methods: {
     handleCurrentChange(val) {
       console.log(`当前页: ${val}`);
-    }
+      this.page = val;
+      this.getCommentNew()
+    },
+    //跳转到mv详情页
+    toMv(id) {
+      this.$router.push(`/mv?id=${id}`);
+    },
+    //获取歌单详情
+    getSonglist(){
+      this.$axios.get("/playlist/detail?id="+this.id).then(res=>{
+      //console.log(res);
+      this.resultMes = res.data.playlist; 
+      let songList = res.data.playlist.tracks;
+      for(let i=0; i<songList.length;i++){
+        let newSong = [
+            {
+              name: "",
+              id: "",
+              mvid: "",
+              picUrl: "",
+              artist:"",
+              duration: "",
+              albumName: ""
+            },
+          ];
+        newSong[0].name = songList[i].name;
+        newSong[0].id = songList[i].id;
+        newSong[0].mvid = songList[i].mv;
+        newSong[0].picUrl = songList[i].al.picUrl;
+        newSong[0].artist = songList[i].ar[0].name;
+        newSong[0].duration = songList[i].dt;
+        newSong[0].albumName = songList[i].al.name;
+        this.musicList.push(newSong[0]);
+      }
+      })
+    },
+    //获取歌单热门评论
+    getCommentHot(){
+      this.$axios.get("/comment/hot?type=2&id="+this.id).then(res=> {
+        //console.log(res);
+       this.hotComment = res.data.hotComments;
+        //this.hotCount = res.data.total;
+      })
+    },
+    //获取最新评论
+    getCommentNew(){
+      this.$axios.get("/comment/playlist?limit=5&id="+this.id+"&offset="+(this.page-1)*5).then(res=>{
+        console.log(res);
+        //this.hotComment = res.data.hotComments;
+        this.total = res.data.total;
+        this.newComment = res.data.comments;
+      })
+    },
+    //播放歌曲
+     playMusic(index) {
+      this.$axios
+        .get("/song/url?id=" + this.musicList[index].id)
+        .then((res) => {
+        //  console.log(res);
+          let url = res.data.data[0].url;
+          //设置给父组件 Index 播放地址
+         // console.log(this.musicList);
+          for (let i = 0; i < this.musicList.length; i++) {
+            this.$parent.musicList[i] = this.musicList[i];
+          }
+          //this.$parent.musicList = this.newSongList;
+          this.$parent.musicUrl = url;
+          this.$parent.index = index;
+          //element-ui Notification 通知
+          this.$notify.closeAll();
+          this.$notify({
+            title: "正在播放",
+            duration: 0, //不自动关闭
+            dangerouslyUseHTMLString: true, //识别HTML片段
+            position: "bottom-right", //弹出位置
+            offset: 100, //偏移量
+            message: `
+        <div>
+        <div class = "current-music-card">
+					<img class = "cover" src="${this.musicList[index].picUrl}"></img>
+          <h3 class = "music-name" >${this.musicList[index].name}--${this.musicList[index].artist}</h3>
+        </div>
+         
+        </div>
+				`,
+          });
+        });
+    },
+
+  },
+  created(){
+    this.id = this.$route.query.id;
+    this.getSonglist();
+    this.getCommentHot();
+    this.getCommentNew();
   }
 };
 </script>

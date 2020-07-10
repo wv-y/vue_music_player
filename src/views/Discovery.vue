@@ -12,7 +12,7 @@
         推荐歌单
       </h3>
       <div class="items">
-        <div class="item" v-for="(item, index) in gedan" :key="index">
+        <div class="item" v-for="(item, index) in gedan" :key="index" @click="toSongList(item.id)">
           <div class="img-wrap">
             <div class="desc-wrap">
               <span class="desc">{{ item.copywriter }}</span>
@@ -174,6 +174,10 @@ export default {
     toMv(id) {
       this.$router.push(`/mv?id=${id}`);
     },
+    //跳转到歌单详情
+    toSongList(id){
+      this.$router.push(`/playlist?id=`+id)
+    }
   },
 };
 </script>
