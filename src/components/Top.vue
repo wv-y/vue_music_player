@@ -7,8 +7,8 @@
         <span class="iconfont icon-full-screen"></span>
       </div>-->
       <div class="history-wrapper">
-        <span class="iconfont icon-guifandaohanglanfanhui"></span>
-        <span class="iconfont icon-fuwuhao-daohang-xiala"></span>
+        <span class="iconfont icon-guifandaohanglanfanhui" @click="back()"></span>
+        <span class="iconfont icon-fuwuhao-daohang-xiala" @click="go()"></span>
       </div>
     </div>
     <div class="right-box">
@@ -40,7 +40,13 @@
         }else{
           this.$router.push("/result?inputData="+this.inputData)
         }
-      }
+      },
+      back () { // 后退
+			  this.$router.go(-1)
+		  },
+		  go () { // 前进
+			  this.$router.go(1)
+		  }
     }
   }
 </script>
